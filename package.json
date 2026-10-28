@@ -1,0 +1,12 @@
+{
+  "name": "quiz",
+  "version": "1.0.0",
+  "license": "ISC",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --env-file=.env.local --watch src/index.js",
+    "env:setup": "node -e \"require('node:fs').copyFileSync('.env.example', '.env.local')\"",
+    "local:setup": "npm run env:setup && npm run dev"
+  }
+}
