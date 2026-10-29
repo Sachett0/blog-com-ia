@@ -8,5 +8,10 @@
     "dev": "node --env-file=.env.local --watch src/index.js",
     "env:setup": "node -e \"require('node:fs').copyFileSync('.env.example', '.env.local')\"",
     "local:setup": "npm run env:setup && npm run dev"
+  },
+  "dependencies": {
+    "@mastra/core": "^1.80.0",
+    "nanoid": "^6.0.2",
+    "zod": "^4.6.7"
   }
 }
