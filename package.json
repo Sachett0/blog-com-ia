@@ -7,11 +7,14 @@
   "scripts": {
     "dev": "node --env-file=.env.local --watch src/index.js",
     "env:setup": "node -e \"require('node:fs').copyFileSync('.env.example', '.env.local')\"",
-    "local:setup": "npm run env:setup && npm run dev"
+    "local:setup": "npm run env:setup && npm run dev",
+    "db:up": "docker compose up -d",
+    "db:migrate": "node --env-file=.env.local src/database/migrate.js"
   },
   "dependencies": {
     "@mastra/core": "^1.80.0",
     "nanoid": "^6.0.2",
+    "pg": "^8.23.1",
     "zod": "^4.6.7"
   }
 }

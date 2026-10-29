@@ -1,19 +1,26 @@
 import http from "node:http";
 import { nanoid } from "nanoid";
 import { generatePost } from "./agents/post-writer.js";
+import { db } from "./database/connection.js";
 
 const PORT = process.env.API_PORT || 8080;
 
-const posts = [];
-
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const { method, url } = req;
   const paths = url.split("?");
   const path = paths.at(0) || "/";
 
   if (path === "/posts" && method === "GET") {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    return res.end(JSON.stringify({ data: posts }));
+    try {
+      const { rows: posts } = await db.query("SELECT * FROM posts");
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ data: posts }));
+    } catch (error) {
+      console.error(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ message: "Failed to list posts" }));
+    }
   }
 
   if (path === "/posts/draft" && method === "POST") {
@@ -28,16 +35,13 @@ const server = http.createServer((req, res) => {
       try {
         const { title, content } = await generatePost(body.idea);
 
-        const post = {
-          id: nanoid(),
-          title,
-          content,
-          published_at: null,
-          approved_at: null,
-          rejected_at: null,
-        };
-
-        posts.push(post);
+        const { rows } = await db.query(
+          `INSERT INTO posts (id, title, content, published_at, approved_at, rejected_at)
+           VALUES ($1, $2, $3, $4, $5, $6)
+           RETURNING *`,
+          [nanoid(), title, content, null, null, null],
+        );
+        const post = rows[0];
 
         res.writeHead(201, { "Content-Type": "application/json" });
         return res.end(JSON.stringify({ data: post }));
