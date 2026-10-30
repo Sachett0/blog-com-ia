@@ -97,6 +97,7 @@ export function createApp() {
   });
 
   const app = {
+    server,
     get: (path, handler) => addRoute("GET", path, handler),
     post: (path, handler) => addRoute("POST", path, handler),
     put: (path, handler) => addRoute("PUT", path, handler),

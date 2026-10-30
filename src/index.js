@@ -1,11 +1,8 @@
-import { createApp } from "./http/app.js";
-import { postsRoutes } from "./routes/posts.js";
+import { buildApp } from "./app.js";
 
 const PORT = process.env.API_PORT || 8080;
 
-const app = createApp();
-
-app.register(postsRoutes);
+const app = buildApp();
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
