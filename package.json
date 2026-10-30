@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --env-file=.env.local --watch src/index.js",
+    "build": "docker build -t blog-com-ia .",
     "env:setup": "node -e \"require('node:fs').copyFileSync('.env.example', '.env.local')\"",
     "local:setup": "npm run env:setup && npm run dev",
     "db:up": "docker compose up -d",
