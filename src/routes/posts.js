@@ -1,11 +1,23 @@
 import { nanoid } from "nanoid";
 import { generatePost } from "../agents/post-writer.js";
 import { db } from "../database/connection.js";
+import { hasValidApiKey } from "../http/auth.js";
 
 export function postsRoutes(app) {
   app.get("/posts", async (req, res) => {
+    const includeAll = req.query.include === "all";
+
+    if (includeAll && !hasValidApiKey(req)) {
+      res.writeHead(403, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ message: "Forbidden" }));
+    }
+
     try {
-      const { rows: posts } = await db.query("SELECT * FROM posts");
+      const { rows: posts } = await db.query(
+        includeAll
+          ? "SELECT * FROM posts"
+          : "SELECT * FROM posts WHERE published_at IS NOT NULL",
+      );
 
       res.writeHead(200, { "Content-Type": "application/json" });
       return res.end(JSON.stringify({ data: posts }));
