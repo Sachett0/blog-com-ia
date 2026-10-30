@@ -20,7 +20,10 @@ src/
 │   ├── app.js             # Roteador minimalista (estilo Fastify)
 │   └── auth.js            # Validação da API key (Bearer token)
 ├── routes/
-│   └── posts.js           # Rotas de posts
+│   ├── posts.js           # Rotas de posts
+│   └── docs.js            # Swagger UI e especificação OpenAPI
+├── docs/
+│   └── openapi.js         # Especificação OpenAPI da API
 ├── agents/
 │   └── post-writer.js     # Agente de IA que escreve os posts
 └── database/
@@ -131,6 +134,15 @@ Ciclo de vida de um post:
 3. **Rejeitado:** `rejected_at` recebe a data atual e `approved_at` e `published_at` são limpos.
 
 Um post pode ser aprovado ou rejeitado novamente a qualquer momento; o estado anterior é substituído.
+
+## Documentação da API (Swagger)
+
+Com o servidor rodando, a documentação interativa fica disponível em:
+
+- **[http://localhost:8080/api/docs](http://localhost:8080/api/docs)**: Swagger UI, onde é possível ver e testar os endpoints. Para usar o `include=all`, clique em **Authorize** e informe a API key.
+- **[http://localhost:8080/api/docs/json](http://localhost:8080/api/docs/json)**: especificação OpenAPI 3 em JSON, para importar no Postman, Insomnia, etc.
+
+A especificação fica em [src/docs/openapi.js](src/docs/openapi.js). Ao criar ou alterar uma rota, atualize-a também; o teste [docs.test.js](tests/unit/routes/docs.test.js) falha se uma rota não estiver documentada.
 
 ## Endpoints
 

@@ -158,6 +158,17 @@ describe("createApp", () => {
     assert.equal(consoleError.mock.callCount(), 1);
   });
 
+  it("lists the registered routes", () => {
+    const app = createApp();
+    app.get("/posts", echo);
+    app.post("/posts/:id", echo);
+
+    assert.deepEqual(app.routes, [
+      { method: "GET", path: "/posts" },
+      { method: "POST", path: "/posts/:id" },
+    ]);
+  });
+
   it("passes the app to registered plugins", () => {
     const app = createApp();
     const plugin = mock.fn();

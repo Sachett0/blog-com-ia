@@ -53,7 +53,7 @@ export function createApp() {
   const routes = [];
 
   function addRoute(method, path, handler) {
-    routes.push({ method, segments: splitPath(path), handler });
+    routes.push({ method, path, segments: splitPath(path), handler });
   }
 
   const server = http.createServer(async (req, res) => {
@@ -98,6 +98,9 @@ export function createApp() {
 
   const app = {
     server,
+    get routes() {
+      return routes.map(({ method, path }) => ({ method, path }));
+    },
     get: (path, handler) => addRoute("GET", path, handler),
     post: (path, handler) => addRoute("POST", path, handler),
     put: (path, handler) => addRoute("PUT", path, handler),
