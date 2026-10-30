@@ -37,6 +37,60 @@ export function postsRoutes(app) {
     }
   });
 
+  app.patch("/posts/:id/approve", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const { rows } = await db.query(
+        `UPDATE posts
+         SET approved_at = NOW(), published_at = NOW(), rejected_at = NULL
+         WHERE id = $1
+         RETURNING *`,
+        [id],
+      );
+      const post = rows[0];
+
+      if (!post) {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ message: "Post not found" }));
+      }
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ data: post }));
+    } catch (error) {
+      console.error(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ message: "Failed to approve post" }));
+    }
+  });
+
+  app.delete("/posts/:id/reject", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const { rows } = await db.query(
+        `UPDATE posts
+         SET rejected_at = NOW(), approved_at = NULL, published_at = NULL
+         WHERE id = $1
+         RETURNING *`,
+        [id],
+      );
+      const post = rows[0];
+
+      if (!post) {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ message: "Post not found" }));
+      }
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ data: post }));
+    } catch (error) {
+      console.error(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify({ message: "Failed to reject post" }));
+    }
+  });
+
   app.post("/posts/draft", async (req, res) => {
     try {
       const { title, content } = await generatePost(req.body?.idea);
